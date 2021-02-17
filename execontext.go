@@ -1,5 +1,9 @@
 package main
 
+// Usage :  build , and shadow the cmd you want to timeout.
+// rename original cmd as cmd.orig,
+// rename this tool as cmd
+
 import (
 	"context"
 	"fmt"
