@@ -23,6 +23,8 @@ func main() {
 	// Create the command with our context
 	cmdargs := os.Args[1:]
 	cmd := exec.CommandContext(ctx, os.Args[0]+".orig", cmdargs...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
 	// This time we can simply use Output() to get the result.
 	out, err := cmd.Output()
