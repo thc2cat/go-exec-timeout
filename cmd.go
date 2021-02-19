@@ -7,6 +7,6 @@ import (
 )
 
 func main() {
-	time.Sleep(10 * time.Second)
-	fmt.Println(os.Args[1:])
+	time.Sleep(95 * time.Second)
+	fmt.Print(os.Args[1:])
 }

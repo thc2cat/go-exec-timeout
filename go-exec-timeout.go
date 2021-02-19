@@ -10,20 +10,28 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
 	"time"
 )
 
-const wait = 90 //  Seconds before timeout
-
 func main() {
+
+	waits := getenv("TIMEOUT", "90")
+	wait, err := strconv.Atoi(waits)
+	if err != nil {
+		// handle error
+		fmt.Println(err)
+		os.Exit(2)
+	}
+
 	// Create a new context and add a timeout to it
-	ctx, cancel := context.WithTimeout(context.Background(), wait*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(wait)*time.Second)
 	defer cancel() // The cancel should be deferred so resources are cleaned up
 
 	// Create the command with our context
 	cmdargs := os.Args[1:]
 	cmd := exec.CommandContext(ctx, os.Args[0]+".orig", cmdargs...)
-	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
 
 	// This time we can simply use Output() to get the result.
@@ -38,8 +46,16 @@ func main() {
 	}
 
 	// If there's no context error, we know the command completed (or errored).
-	fmt.Println(string(out))
+	fmt.Print(string(out))
 	if err != nil {
 		log.Println("Non-zero exit code:", err)
 	}
+}
+
+func getenv(key, fallback string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return fallback
+	}
+	return value
 }
