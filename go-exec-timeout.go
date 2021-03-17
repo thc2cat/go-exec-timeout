@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/syslog"
 	"os"
 	"os/exec"
 	"strconv"
@@ -21,7 +22,7 @@ func main() {
 	if err != nil {
 		// handle error
 		fmt.Println(err)
-		os.Exit(2)
+		os.Exit(1)
 	}
 
 	// Create a new context and add a timeout to it
@@ -58,4 +59,12 @@ func getenv(key, fallback string) string {
 		return fallback
 	}
 	return value
+}
+
+func init() {
+	logwriter, e := syslog.New(syslog.LOG_DAEMON|syslog.LOG_INFO, os.Args[0])
+	if e == nil {
+		log.SetOutput(logwriter)
+		log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime)) // remove timestamp
+	}
 }
